@@ -1,4 +1,4 @@
-import Header from "./components/Header";
+import Header from "../components/Header";
 import "../app/globals.css";
 
 export const metadata = {
@@ -9,11 +9,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="h-screen w-full overflow-hidden flex justify-center bg-slate-200 poppins-light">
-          <div className="max-w-4xl w-full relative">
-              <Header />
-              {children}
+      <body className="h-screen w-full overflow-hidden flex justify-center bg-slate-200 poppins-light p-2 text-sm md:text-md">
+        <div className="max-w-4xl h-full w-full flex flex-col relative">
+          <Header />
+          
+          <div className="flex-grow overflow-auto">
+            {children}
           </div>
+        </div>
       </body>
     </html>
   );

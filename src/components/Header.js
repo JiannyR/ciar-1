@@ -23,7 +23,7 @@ export default function Header() {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <button><FiMenu size={35} className="top-8 right-0 absolute p-1 bg-slate-200" /></button>
+                <button><FiMenu size={40} className="top-0 right-0 absolute pl-3 bg-slate-200" /></button>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
