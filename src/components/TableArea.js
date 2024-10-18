@@ -28,7 +28,7 @@ export default function TableArea({ tableTitle, estudiantes, search, isCheckedAl
                             </TableHead>
                             <TableHead className="w-[100px] text-gray-800">ID</TableHead>
                             <TableHead className="w-full text-gray-800">Nombre y Apellidos</TableHead>
-                            <TableHead className="w-full text-gray-800">Email</TableHead>
+                            {/* <TableHead className="w-full text-gray-800">Email</TableHead> */}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -49,9 +49,9 @@ export default function TableArea({ tableTitle, estudiantes, search, isCheckedAl
                                             checked={estudiantesSelected.includes(estudiante.id)} onChange={() => onSelected(estudiante.id)} 
                                         />
                                     </TableCell>
-                                    <TableCell className="w-[100px]">{estudiante.id}</TableCell>
+                                    <TableCell className="w-[100px]">{estudiante.id_student}</TableCell>
                                     <TableCell className="w-full">{estudiante.first_name} {estudiante.last_name}</TableCell>
-                                    <TableCell className="w-full">{estudiante.email || "-"}</TableCell>
+                                    {/* <TableCell className="w-full">{estudiante.email || "-"}</TableCell> */}
                                 </TableRow>
                             )) : null}
                     </TableBody>
