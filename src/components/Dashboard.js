@@ -4,67 +4,55 @@ import Searchbar from "./Searchbar";
 import TableArea from "./TableArea";
 import { useState } from "react";
 import { ButtonAddSelected, ButtonDeletedSelected } from "./ButtonAction";
-import { moverEstudiantes } from "@/app/api/actions";
+import { fetchEstudiantes, moverEstudiantes } from "@/app/api/actions";
 
-export default function Dashboard({ title, placeholder, btnTitle, tableTitle, estudiantes }) {
+export default function Dashboard({ title, placeholder, btnTitle, tableTitle, estudiantes, onMove = () => { }, onHandleError = () => { } }) {
 
     const [estudiantesSelected, setEstudiantesSelected] = useState([])
     const [selectedAll, setSelectedAll] = useState(false)
     const [search, setSearch] = useState('')
     const pathCurrent = usePathname()
 
+    // Función para seleccionar un estudiante
     const checkSelected = (id) => {
-        return estudiantesSelected.includes(id) 
-            ? setEstudiantesSelected(estudiantesSelected.filter((estudiante) => estudiante !== id)) 
+        return estudiantesSelected.includes(id)
+            ? setEstudiantesSelected(estudiantesSelected.filter((estudiante) => estudiante !== id))
             : setEstudiantesSelected([...estudiantesSelected, id])
     }
 
+    // Función para seleccionar todos los estudiantes
     const selectAll = (event) => {
         setSelectedAll(event.target.checked)
-        return event.target.checked 
-            ? setEstudiantesSelected(estudiantes.map((estudiante) => estudiante.id)) 
+        return event.target.checked
+            ? setEstudiantesSelected(estudiantes.map((estudiante) => estudiante.id))
             : setEstudiantesSelected([])
     }
 
-    const handleDeleteSelected = async () => {
+    // Función para mover los estudiantes seleccionados
+    const handleMoveSelected = async (flag) => {
         if (estudiantesSelected.length > 0) {
-            try {
-                const { status } = await moverEstudiantes(estudiantesSelected, true);
-                
-                if (status === 'success') {
-                    // Recargar la página
-                    window.location.reload();
-                }
-            } catch (error) {
-                console.error('Error al eliminar estudiantes:', error);
-            }
-        }
-    };
-
-    const handleAddSelected = async () => {
-        if (estudiantesSelected.length > 0) {
-            try {
-                const { status } = await moverEstudiantes(estudiantesSelected, false);
-                
-                if (status === 'success') {
-                    // Recargar la página
-                    window.location.reload();
-                }
-            } catch (error) {
-                console.error('Error al add estudiantes:', error);
+            const { status, message } = await moverEstudiantes(estudiantesSelected, flag);
+            if (status === 'success') {
+                const { data, message } = await fetchEstudiantes((pathCurrent === "/seleccionados") ? true : false);
+                onMove(data);
+                setSelectedAll(false);
+                setEstudiantesSelected([]);
+                message && onHandleError(message);
+            } else {
+                console.error('[Error al mover estudiante/s]:', message);
             }
         }
     };
 
     return (
         <div className="w-full flex flex-col gap-4 h-full">
-            <span className="text-3xl font-normal text-gray-700">{title}</span>
+            <span className="text-3xl font-bold text-gray-600">{title}</span>
 
             <div className="w-full flex gap-4 p-1 rounded-md">
                 <Searchbar title={placeholder} onSearch={setSearch} />
-                {pathCurrent === "/seleccionados" 
-                    ? <ButtonAddSelected title={btnTitle} onAdd={handleAddSelected} isDisabled={estudiantesSelected.length < 1} /> 
-                    : pathCurrent === "/" && <ButtonDeletedSelected title={btnTitle} onDelete={handleDeleteSelected} isDisabled={estudiantesSelected.length < 1} />}
+                {pathCurrent === "/seleccionados"
+                    ? <ButtonAddSelected title={btnTitle} onAdd={handleMoveSelected} isDisabled={estudiantesSelected.length < 1} />
+                    : pathCurrent === "/" && <ButtonDeletedSelected title={btnTitle} onDelete={handleMoveSelected} isDisabled={estudiantesSelected.length < 1} />}
             </div>
 
             <div className="w-full flex-grow overflow-hidden">
@@ -74,14 +62,14 @@ export default function Dashboard({ title, placeholder, btnTitle, tableTitle, es
                     </span>
                 </div>
                 <div className="h-full overflow-y-auto">
-                    <TableArea 
-                        tableTitle={tableTitle} 
-                        estudiantes={estudiantes} 
+                    <TableArea
+                        tableTitle={tableTitle}
+                        estudiantes={estudiantes}
                         search={search}
-                        isCheckedAll={selectedAll} 
-                        estudiantesSelected={estudiantesSelected} 
-                        onSelected={checkSelected} 
-                        onSelectedAll={selectAll} 
+                        isCheckedAll={selectedAll}
+                        estudiantesSelected={estudiantesSelected}
+                        onSelected={checkSelected}
+                        onSelectedAll={selectAll}
                     />
                 </div>
             </div>
