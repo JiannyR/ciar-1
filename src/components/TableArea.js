@@ -26,9 +26,10 @@ export default function TableArea({ tableTitle, estudiantes, search, isCheckedAl
                                     onChange={onSelectedAll} 
                                 />
                             </TableHead>
-                            <TableHead className="w-[100px] text-gray-800">ID</TableHead>
+                            <TableHead className="w-[100px] text-gray-800">Grupo</TableHead>
                             <TableHead className="w-full text-gray-800">Nombre y Apellidos</TableHead>
-                            <TableHead className="w-full text-gray-800">Email</TableHead>
+                            <TableHead className="w-full text-gray-800">Promedio General</TableHead>
+                            <TableHead className="w-full text-gray-800">indice General</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -38,7 +39,7 @@ export default function TableArea({ tableTitle, estudiantes, search, isCheckedAl
                                     key={estudiante.id} 
                                     className={clsx(
                                         "text-gray-700",
-                                        search.length > 0 && !(estudiante.first_name.toLowerCase().includes(search.toLowerCase()) || estudiante.last_name.toLowerCase().includes(search.toLowerCase())) ? "hidden" : ""
+                                        search.length > 0 && !(estudiante.full_name.toLowerCase().includes(search.toLowerCase()) ) ? "hidden" : ""
                                     )}
                                 >
                                     <TableCell>
@@ -49,9 +50,10 @@ export default function TableArea({ tableTitle, estudiantes, search, isCheckedAl
                                             checked={estudiantesSelected.includes(estudiante.id)} onChange={() => onSelected(estudiante.id)} 
                                         />
                                     </TableCell>
-                                    <TableCell className="w-[100px]">{estudiante.id}</TableCell>
-                                    <TableCell className="w-full">{estudiante.first_name} {estudiante.last_name}</TableCell>
-                                    <TableCell className="w-full">{estudiante.email || "-"}</TableCell>
+                                    <TableCell className="w-[100px]">{estudiante.grupo}</TableCell>
+                                    <TableCell className="w-full">{estudiante.full_name}</TableCell>
+                                    <TableCell className="w-full">{estudiante.avg_gen}</TableCell>
+                                    <TableCell className="w-full">{estudiante.indice_gen}</TableCell>
                                 </TableRow>
                             )) : null}
                     </TableBody>
