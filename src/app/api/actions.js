@@ -16,7 +16,7 @@ const pool = new Pool({
 export async function fetchEstudiantes(groupStudent) {
     try {
         const client = await pool.connect();
-        const res = await client.query(`SELECT id, grupo, full_name, avg_gen, indice_gen, is_selected FROM estudiantes WHERE is_selected = ${groupStudent}`);
+        const res = await client.query(`SELECT id, grupo, full_name, avg_gen, indice_gen, is_selected FROM estudiantes WHERE is_selected = ${groupStudent} AND is_sugerido = true`);
         client.release();
         return { data: res.rows };
 
@@ -30,7 +30,7 @@ export async function fetchEstudiantes(groupStudent) {
 export async function fetchSeleccionados() {
     try {
         const client = await pool.connect();
-        const res = await client.query('SELECT id, grupo, full_name, avg_gen, indice_gen, is_selected FROM estudiantes WHERE is_selected = true');
+        const res = await client.query('SELECT id, grupo, full_name, avg_gen, indice_gen, is_selected FROM estudiantes WHERE is_selected = true AND is_sugerido = true');
         client.release(); // Liberar el cliente de la conexión
         return res.rows;
     } catch (err) {

@@ -20,16 +20,7 @@ def cargar_datos():
 
 
 
-# Agrega la columna is_selected a la base de datos si no existe
-def agregar_columna(conn):
-    cursor = conn.cursor()
-    try:
-        cursor.execute("ALTER TABLE estudiantes ADD COLUMN IF NOT EXISTS is_selected BOOLEAN DEFAULT FALSE;")
-        conn.commit()
-    except Exception as e:
-        print(f"La columna no se pudo agregar o ya existe: {e}")
-    finally:
-        cursor.close()
+
 
 # La parte del preprocesamiento de datos
 def preprocesar_datos(df):
@@ -58,7 +49,9 @@ def encontrar_estudiantes_aa(df, features_scaled, k=5):
 
 # Crear un perfil de alto aprovechamiento
 def crear_perfil_aa(estudiantes_aa):
-    return estudiantes_aa.mean()
+    # Seleccionar solo columnas numéricas
+    estudiantes_aa_numerico = estudiantes_aa.select_dtypes(include=['number'])
+    return estudiantes_aa_numerico.mean()
 
 # Comparar todos los estudiantes con el perfil AA
 def comparar_con_perfil(df, perfil_promedio):
@@ -79,7 +72,7 @@ def actualizar_base_datos(df, conn):
     cursor = conn.cursor()
     for index, row in df.iterrows():
         cursor.execute(
-            "UPDATE estudiantes SET is_selected = %s WHERE id = %s",
+            "UPDATE estudiantes SET is_sugerido = %s WHERE id = %s",
             (row['sugeridos'], row['id'])
         )
     conn.commit()
@@ -95,9 +88,7 @@ def main():
         port="5432"
     )
 
-    # Agrega columna is_selected si no existe
-    agregar_columna(conn)
-
+   
     # Cargar y procesar datos
     df_estudiantes = cargar_datos()
     
