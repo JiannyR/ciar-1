@@ -6,8 +6,8 @@ import { Pool } from 'pg';
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'ciar',
-    password: '12345678',
+    database: 'tesis',
+    password: '1234',
     port: 5432,
 });
 
@@ -16,12 +16,13 @@ const pool = new Pool({
 export async function fetchEstudiantes(groupStudent) {
     try {
         const client = await pool.connect();
-        const res = await client.query('SELECT id, first_name, last_name, email, is_active FROM user_user WHERE is_active = false');
-        client.release(); // Liberar el cliente de la conexión
-        return res.rows;
+        const res = await client.query(`SELECT id, grupo, full_name, avg_gen, indice_gen, is_selected FROM estudiantes WHERE is_selected = ${groupStudent}`);
+        client.release();
+        return { data: res.rows };
+
     } catch (err) {
-        console.error('Error fetching sugeridos:', err);
-        throw new Error('Failed to fetch sugeridos');
+        console.error('Error fetching estudiantes:', err.message);
+        return { data: [], message: err.message };
     }
 }
 
@@ -29,7 +30,7 @@ export async function fetchEstudiantes(groupStudent) {
 export async function fetchSeleccionados() {
     try {
         const client = await pool.connect();
-        const res = await client.query('SELECT id, first_name, last_name, email, is_active FROM user_user WHERE is_active = true');
+        const res = await client.query('SELECT id, grupo, full_name, avg_gen, indice_gen, is_selected FROM estudiantes WHERE is_selected = true');
         client.release(); // Liberar el cliente de la conexión
         return res.rows;
     } catch (err) {
@@ -46,7 +47,7 @@ export async function moverEstudiantes(ids = [], flag = false) {
         const client = await pool.connect();
         
         // Hacer un UPDATE en la columna 'is_selected' basado en los ids.
-        const queryText = `UPDATE user_user SET is_active = ${flag} WHERE id = ANY($1) RETURNING id`;
+        const queryText = `UPDATE estudiantes SET is_selected = ${flag} WHERE id = ANY($1) RETURNING id`;
         
         // Aquí envolvemos ids en otro array, ya que $1 espera un array.
         const res = await client.query(queryText, [ids]);

@@ -34,7 +34,7 @@ export default function TableArea({ tableTitle, estudiantes, search, isCheckedAl
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {estudiantes.length > 1
+                        {estudiantes.length > 0
                             ? estudiantes.map((estudiante) => (
                                 <TableRow
                                     key={estudiante.id}
